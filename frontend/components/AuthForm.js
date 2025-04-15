@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client";
 import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi";
 
-import { SIGNUP, LOGIN } from "@/graphql/authMutations";
+import { SIGNUP, LOGIN } from "../graphql/authMutations";
 
 export default function AuthForm({ type }) {
   const router = useRouter();

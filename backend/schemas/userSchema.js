@@ -14,6 +14,14 @@ export const userTypeDefs = gql`
     user: User!
   }
 
+  type Mutation {
+    logout: LogoutResponse!
+  }
+
+  type LogoutResponse {
+    success: Boolean!
+  }
+
   extend type Query {
     me: User
     users: [User!]!
@@ -22,5 +30,6 @@ export const userTypeDefs = gql`
   extend type Mutation {
     signup(username: String!, email: String!, password: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
+    updateProfile(username: String, email: String, password: String): User!
   }
 `;

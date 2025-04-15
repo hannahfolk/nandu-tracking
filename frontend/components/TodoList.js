@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { GET_TODOS } from "@/graphql/queries";
+import { GET_TODOS } from "../graphql/queries";
 import TodoItem from "./TodoItem";
 
 const TodoList = () => {

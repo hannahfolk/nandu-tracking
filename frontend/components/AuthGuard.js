@@ -1,25 +1,34 @@
 import { useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import { ME } from "../graphql/authMutations";
 import { useRouter } from "next/router";
 
-export default function AuthGuard({ children, requiredAuth = true }) {
+import { ME } from "../graphql/authMutations";
+
+export default function AuthGuard({ children }) {
   const router = useRouter();
-  const { data, loading, error } = useQuery(ME);
-  console.log(data, error);
+  const { loading, error } = useQuery(ME, {
+    fetchPolicy: "network-only", // Always check auth status
+  });
 
   useEffect(() => {
-    if (!loading) {
-      if (requiredAuth && error) {
-        router.push("/login");
-      } else if (!requiredAuth && data?.me) {
-        router.push("/");
-      }
+    if (!loading && error) {
+      // Store attempted URL before redirect
+      sessionStorage.setItem("redirectUrl", router.asPath);
+      router.push("/login");
     }
-  }, [loading, error, data, requiredAuth, router]);
+  }, [loading, error, router]);
 
-  if (loading) return <div className="flex justify-center p-8">Loading...</div>;
-  if (requiredAuth && error) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return null;
+  }
 
   return children;
 }

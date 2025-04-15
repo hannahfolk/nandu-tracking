@@ -1,5 +1,5 @@
-import AuthForm from "@/components/AuthForm";
-import AuthGuard from "@/components/AuthGuard";
+import AuthForm from "../components/AuthForm";
+import AuthGuard from "../components/AuthGuard";
 
 export default function Signup() {
   return (

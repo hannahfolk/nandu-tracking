@@ -3,10 +3,10 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { gql, useQuery, useMutation } from "@apollo/client";
 
-import { ME } from "@/graphql/authMutations";
-import { CREATE_TODO } from "@/graphql/mutations";
-import TodoList from "@/components/TodoList";
-import AuthGuard from "@/components/AuthGuard";
+import { ME } from "../graphql/authMutations";
+import { CREATE_TODO } from "../graphql/mutations";
+import TodoList from "../components/TodoList";
+import AuthGuard from "../components/AuthGuard";
 
 export default function Home() {
   const router = useRouter();
@@ -68,24 +68,7 @@ export default function Home() {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Head>
-          <title>Nandu Tracking</title>
-          <meta
-            name="description"
-            content="Nandu Tracking app for use while practicing for a nandu competion"
-          />
-        </Head>
-
         <div className="max-w-xs mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                Nandu Tracking
-              </span>
-            </h1>
-            <p className="text-gray-500">Organize your tasks beautifully</p>
-          </div>
-
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <form onSubmit={handleSubmit} className="p-4 border-b border-gray-200">
               <div className="flex rounded-md shadow-sm">

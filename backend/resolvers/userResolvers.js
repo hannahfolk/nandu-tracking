@@ -32,6 +32,19 @@ export const userResolvers = {
       const token = user.generateAuthToken();
       return { token, user };
     },
+    updateProfile: async (_, { username, email, password }, { user }) => {
+      if (!user) throw new Error("Not authenticated");
+
+      const updates = {};
+      if (username) updates.username = username;
+      if (email) updates.email = email;
+      if (password) updates.password = await bcrypt.hash(password, 10);
+
+      return await User.findByIdAndUpdate(user.id, updates, { new: true });
+    },
+    logout: () => {
+      return { success: true };
+    },
   },
   User: {
     todos: async (user) => {
