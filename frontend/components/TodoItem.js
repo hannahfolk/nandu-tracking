@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { DELETE_TODO, UPDATE_TODO } from "../graphql/mutations";
 import { FiTrash2, FiEdit, FiCheck, FiX } from "react-icons/fi";
+
+import { DELETE_TODO, UPDATE_TODO } from "@/graphql/mutations";
 
 const TodoItem = ({ todo }) => {
   const [isEditing, setIsEditing] = useState(false);

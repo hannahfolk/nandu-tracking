@@ -1,5 +1,10 @@
-import AuthForm from "../components/AuthForm";
+import AuthForm from "@/components/AuthForm";
+import AuthGuard from "@/components/AuthGuard";
 
 export default function Signup() {
-  return <AuthForm type="signup" />;
+  return (
+    <AuthGuard requiredAuth={false}>
+      <AuthForm type="signup" />
+    </AuthGuard>
+  );
 }

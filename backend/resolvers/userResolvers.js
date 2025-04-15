@@ -9,7 +9,7 @@ export const userResolvers = {
       if (!user) throw new Error("Not authenticated");
       return await User.findById(user.id).populate("todos");
     },
-    users: async () => await User.find().populate("todos"),
+    users: async () => await User.find(),
   },
   Mutation: {
     signup: async (_, { username, email, password }) => {
@@ -34,6 +34,9 @@ export const userResolvers = {
     },
   },
   User: {
-    todos: async (user) => await Todo.find({ user: user.id }),
+    todos: async (user) => {
+      await user.populate("todos");
+      return user.todos;
+    },
   },
 };

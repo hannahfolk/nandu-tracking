@@ -1,5 +1,10 @@
-import AuthForm from "../components/AuthForm";
+import AuthForm from "@/components/AuthForm";
+import AuthGuard from "@/components/AuthGuard";
 
 export default function Login() {
-  return <AuthForm type="login" />;
+  return (
+    <AuthGuard requiredAuth={false}>
+      <AuthForm type="login" />
+    </AuthGuard>
+  );
 }
