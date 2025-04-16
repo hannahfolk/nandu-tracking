@@ -32,10 +32,11 @@ export const ME = gql`
       id
       username
       email
-      todos {
+      events {
         id
-        title
-        completed
+        chineseName
+        englishName
+        code
       }
     }
   }

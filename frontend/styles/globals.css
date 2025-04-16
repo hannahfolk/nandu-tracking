@@ -29,3 +29,11 @@
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+.event-card {
+  transition: all 0.2s ease;
+}
+
+.event-card.selected {
+  transform: translateX(4px);
+}

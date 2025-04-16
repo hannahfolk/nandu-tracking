@@ -1,28 +1,15 @@
 import { gql } from "@apollo/client";
 
-export const CREATE_TODO = gql`
-  mutation CreateTodo($title: String!) {
-    createTodo(title: $title) {
+export const UPDATE_USER_EVENTS = gql`
+  mutation UpdateUserEvents($eventIds: [ID!]!) {
+    updateUserEvents(eventIds: $eventIds) {
       id
-      title
-      completed
-      createdAt
+      events {
+        id
+        chineseName
+        englishName
+        code
+      }
     }
-  }
-`;
-
-export const UPDATE_TODO = gql`
-  mutation UpdateTodo($id: ID!, $title: String, $completed: Boolean) {
-    updateTodo(id: $id, title: $title, completed: $completed) {
-      id
-      title
-      completed
-    }
-  }
-`;
-
-export const DELETE_TODO = gql`
-  mutation DeleteTodo($id: ID!) {
-    deleteTodo(id: $id)
   }
 `;

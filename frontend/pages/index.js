@@ -1,122 +1,75 @@
-import { useEffect, useState } from "react";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 
-import { ME } from "../graphql/authMutations";
-import { CREATE_TODO } from "../graphql/mutations";
-import TodoList from "../components/TodoList";
+import { GET_USER_EVENTS } from "../graphql/queries";
+import EventSelection from "../components/EventSelection";
 import AuthGuard from "../components/AuthGuard";
 
 export default function Home() {
-  const router = useRouter();
-  const { data, loading, error } = useQuery(ME);
-
-  const [title, setTitle] = useState("");
-  const [createTodo, { loading: isCreating, error: createError }] = useMutation(CREATE_TODO, {
-    update(cache, { data: { createTodo } }) {
-      cache.modify({
-        fields: {
-          todos(existingTodos = []) {
-            const newTodoRef = cache.writeFragment({
-              data: createTodo,
-              fragment: gql`
-                fragment NewTodo on Todo {
-                  id
-                  title
-                  completed
-                  createdAt
-                }
-              `,
-            });
-            return [newTodoRef, ...existingTodos];
-          },
-        },
-      });
-    },
-    onCompleted: () => setTitle(""),
-  });
-
-  useEffect(() => {
-    if (!loading && error) {
-      router.push("/login");
-    }
-  }, [loading, error, router]);
-
-  if (loading) return <div className="flex justify-center p-8">Loading...</div>;
-  if (error) return null;
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (title.trim()) {
-      await createTodo({
-        variables: { title },
-        optimisticResponse: {
-          __typename: "Mutation",
-          createTodo: {
-            __typename: "Todo",
-            id: `temp-${Date.now()}`,
-            title: title.trim(),
-            completed: false,
-            createdAt: new Date().toISOString(),
-          },
-        },
-      });
-    }
-  };
+  const { data, loading, error } = useQuery(GET_USER_EVENTS);
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xs mx-auto">
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <form onSubmit={handleSubmit} className="p-4 border-b border-gray-200">
-              <div className="flex rounded-md shadow-sm">
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="What needs to be done?"
-                  className="flex-1 min-w-0 block w-full px-3 py-1.5 rounded-l-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  disabled={isCreating}
-                />
-                <button
-                  type="submit"
-                  disabled={!title.trim() || isCreating}
-                  className={`inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-r-md text-white ${
-                    !title.trim() || isCreating
-                      ? "bg-indigo-300"
-                      : "bg-indigo-600 hover:bg-indigo-700"
-                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-                >
-                  {isCreating ? "Adding..." : "Add"}
-                </button>
+      <div className="min-h-screen bg-gray-50 bg-gradient-to-br from-blue-50 to-indigo-50">
+        <main className="max-w-4xl mx-auto py-8 px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {data?.user ? `${data.user.username}'s Events` : "My Events"}
+            </h1>
+            <p className="mt-2 text-gray-600">Select the events you'll be participating in</p>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700">Error loading events: {error.message}</p>
+                </div>
               </div>
-            </form>
-
-            <div className="p-4">
-              <TodoList />
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="bg-white shadow rounded-lg overflow-hidden">
+                <EventSelection />
+              </div>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Drag and drop to reorder list</p>
-            <p className="mt-1">
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-          </div>
-
-          {createError && (
-            <div className="mt-2 text-sm text-red-600">
-              Failed to create todo: {createError.message}
-            </div>
+              {data?.user?.events?.length > 0 && (
+                <div className="mt-8 bg-white shadow rounded-lg overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h2 className="text-lg font-medium text-gray-900">Your Selected Events</h2>
+                  </div>
+                  <div className="divide-y divide-gray-200">
+                    {data.user.events.map((event) => (
+                      <div key={event.id} className="px-6 py-4 flex justify-between items-center">
+                        <div>
+                          <h3 className="text-md font-medium">{event.englishName}</h3>
+                          <p className="text-sm text-gray-500">
+                            {event.chineseName} ({event.code})
+                          </p>
+                        </div>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          Registered
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
-        </div>
+        </main>
       </div>
     </AuthGuard>
   );

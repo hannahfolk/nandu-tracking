@@ -1,13 +1,12 @@
-// backend/resolvers/userResolvers.js
-import User from "../models/User.js";
-import Todo from "../models/Todo.js";
 import bcrypt from "bcryptjs";
+
+import { User } from "../models/index.js";
 
 export const userResolvers = {
   Query: {
     me: async (_, __, { user }) => {
       if (!user) throw new Error("Not authenticated");
-      return await User.findById(user.id).populate("todos");
+      return await User.findById(user.id).populate("events");
     },
     users: async () => await User.find(),
   },
@@ -47,9 +46,9 @@ export const userResolvers = {
     },
   },
   User: {
-    todos: async (user) => {
-      await user.populate("todos");
-      return user.todos;
+    events: async (user) => {
+      await user.populate("events");
+      return user.events;
     },
   },
 };
