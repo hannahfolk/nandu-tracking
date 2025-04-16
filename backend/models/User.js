@@ -33,8 +33,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.virtual("todos", {
-  ref: "Todo",
+userSchema.virtual("events", {
+  ref: "Event",
   localField: "_id",
   foreignField: "user",
   justOne: false,

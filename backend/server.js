@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { ApolloServer } from "apollo-server-express";
 
-import { typeDefs } from "./schemas/index.js";
+import { allTypeDefs as typeDefs } from "./schemas/index.js";
 import { resolvers } from "./resolvers/index.js";
 import connectDB from "./config/db.js";
 

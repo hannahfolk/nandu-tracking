@@ -1,21 +1,32 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
-export const GET_TODOS = gql`
-  query GetTodos {
-    todos {
-      id
-      title
-      completed
-      createdAt
+export const GET_ALL_EVENTS = gql`
+  query GetAllEvents {
+    events {
+      chineseName
+      englishName
+      code
     }
   }
 `;
 
-export const TODO_FRAGMENT = gql`
-  fragment TodoItem on Todo {
-    id
-    title
-    completed
-    createdAt
+export const GET_USER_EVENTS = gql`
+  query GetUserEvents {
+    me {
+      id
+      username
+      events {
+        id
+        chineseName
+        englishName
+        code
+      }
+    }
+    events {
+      id
+      chineseName
+      englishName
+      code
+    }
   }
 `;

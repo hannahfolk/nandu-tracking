@@ -6,7 +6,7 @@ export const userTypeDefs = gql`
     username: String!
     email: String!
     createdAt: String!
-    todos: [Todo!]!
+    events: [Event!]!
   }
 
   type AuthPayload {
