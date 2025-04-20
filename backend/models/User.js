@@ -26,19 +26,18 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    events: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Event",
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
-
-userSchema.virtual("events", {
-  ref: "Event",
-  localField: "_id",
-  foreignField: "user",
-  justOne: false,
-});
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {

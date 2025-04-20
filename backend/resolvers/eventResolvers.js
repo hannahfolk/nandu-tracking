@@ -4,7 +4,7 @@ import { Event } from "../models/index.js";
 
 export const eventResolvers = {
   Query: {
-    events: async () => await Event.find().sort({ createdAt: -1 }),
+    events: async () => await Event.find(),
     event: async (_, { id }) => await Event.findById(id),
     eventByCode: async (_, { code }) => {
       return await Event.findOne({ code: code.toUpperCase() });
