@@ -1,11 +1,11 @@
 import { useQuery } from "@apollo/client";
 
-import { GET_USER_EVENTS } from "../graphql/queries";
+import { ME } from "../graphql/authMutations";
 import EventSelection from "../components/EventSelection";
 import AuthGuard from "../components/AuthGuard";
 
 export default function Home() {
-  const { data, loading, error } = useQuery(GET_USER_EVENTS);
+  const { data, loading, error } = useQuery(ME);
 
   return (
     <AuthGuard>
@@ -13,7 +13,7 @@ export default function Home() {
         <main className="max-w-4xl mx-auto py-8 px-4">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">
-              {data?.user ? `${data.user.username}'s Events` : "My Events"}
+              {data?.me ? `${data.me.username}'s Events` : "My Events"}
             </h1>
             <p className="mt-2 text-gray-600">Select the events you'll be participating in</p>
           </div>
@@ -44,29 +44,6 @@ export default function Home() {
               <div className="bg-white shadow rounded-lg overflow-hidden">
                 <EventSelection />
               </div>
-
-              {data?.user?.events?.length > 0 && (
-                <div className="mt-8 bg-white shadow rounded-lg overflow-hidden">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h2 className="text-lg font-medium text-gray-900">Your Selected Events</h2>
-                  </div>
-                  <div className="divide-y divide-gray-200">
-                    {data.user.events.map((event) => (
-                      <div key={event.id} className="px-6 py-4 flex justify-between items-center">
-                        <div>
-                          <h3 className="text-md font-medium">{event.englishName}</h3>
-                          <p className="text-sm text-gray-500">
-                            {event.chineseName} ({event.code})
-                          </p>
-                        </div>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Registered
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </>
           )}
         </main>

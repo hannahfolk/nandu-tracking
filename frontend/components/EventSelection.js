@@ -1,25 +1,37 @@
 import { useQuery, useMutation } from "@apollo/client";
 
+import { ME } from "../graphql/authMutations";
 import { GET_ALL_EVENTS } from "../graphql/queries";
 import { UPDATE_USER_EVENTS } from "../graphql/mutations";
 import EventCard from "./EventCard";
 
 export default function EventSelection() {
   const { loading, error, data } = useQuery(GET_ALL_EVENTS);
+  const { data: userData } = useQuery(ME);
   const [updateEvents] = useMutation(UPDATE_USER_EVENTS);
 
-  const handleEventToggle = async (eventId, isParticipating) => {
+  const handleEventToggle = async (eventId) => {
+    const usersEvents = userData?.me.events || [];
+    const isEventAlreadyAdded = usersEvents.some((event) => event.id === eventId);
+    const [currentEvent] = data.events.filter((event) => event.id === eventId);
+
     try {
       await updateEvents({
-        variables: { eventId, participate: !isParticipating },
+        variables: { eventId },
         optimisticResponse: {
           __typename: "Mutation",
           updateUserEvents: {
             __typename: "User",
-            id: "current-user", // This should be the actual user ID
-            events: isParticipating
-              ? data.user.events.filter((id) => id !== eventId)
-              : [...data.user.events, eventId],
+            id: userData?.me.id,
+            events: isEventAlreadyAdded
+              ? usersEvents.filter((event) => event.id !== eventId)
+              : [
+                  ...usersEvents,
+                  {
+                    ...currentEvent,
+                    createdAt: new Date().toISOString(),
+                  },
+                ],
           },
         },
       });
@@ -32,17 +44,18 @@ export default function EventSelection() {
   if (error) return <div>Error loading events</div>;
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <h2 className="text-xl font-semibold mb-4">Select Your Events</h2>
-      <div className="space-y-2">
-        {data.events.map((event) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            isSelected={data.user?.events?.includes(event.id)}
-            onToggle={handleEventToggle}
-          />
-        ))}
+    <div className="p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {data.events.map((event) => {
+          return (
+            <EventCard
+              key={event.id}
+              event={event}
+              isSelected={userData.me?.events?.some((item) => item.id === event.id)}
+              onToggle={handleEventToggle}
+            />
+          );
+        })}
       </div>
     </div>
   );

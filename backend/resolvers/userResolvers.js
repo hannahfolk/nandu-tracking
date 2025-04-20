@@ -44,6 +44,20 @@ export const userResolvers = {
     logout: () => {
       return { success: true };
     },
+    updateUserEvents: async (_, { eventId }, { user }) => {
+      if (!user) throw new Error("Not authenticated");
+
+      const databaseUser = await User.findById(user.id);
+      const eventExists = databaseUser.events.includes(eventId);
+
+      const updatedUser = await User.findByIdAndUpdate(
+        user.id,
+        eventExists ? { $pull: { events: eventId } } : { $addToSet: { events: eventId } },
+        { new: true }
+      ).populate("events");
+
+      return updatedUser;
+    },
   },
   User: {
     events: async (user) => {

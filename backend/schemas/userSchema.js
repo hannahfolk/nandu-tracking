@@ -31,5 +31,6 @@ export const userTypeDefs = gql`
     signup(username: String!, email: String!, password: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
     updateProfile(username: String, email: String, password: String): User!
+    updateUserEvents(eventId: ID!): User
   }
 `;
