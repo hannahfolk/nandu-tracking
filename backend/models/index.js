@@ -1,5 +1,7 @@
-// backend/models/index.js
+import Connection from "./Connection.js";
 import Event from "./Event.js";
+import Nandu from "./Nandu.js";
+import StaticConnection from "./StaticConnection.js";
 import User from "./User.js";
 
-export { Event, User };
+export { Connection, Event, Nandu, StaticConnection, User };
